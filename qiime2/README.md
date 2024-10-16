@@ -2,13 +2,13 @@
 
 Script used so far
 
-###import data in qiime and demultiplex
+### import data in qiime and demultiplex
 qiime tools import \
   --type "SampleData[SequencesWithQuality]" \
   --input-format SingleEndFastqManifestPhred33V2 \
   --input-path parkinsons_manifest.txt \
   --output-path ./demux.qza
-###visualize demultiplexed data
+### visualize demultiplexed data
 qiime demux summarize \
   --i-data demux.qza \
   --o-visualization demux.qzv
