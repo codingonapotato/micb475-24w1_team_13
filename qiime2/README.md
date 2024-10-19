@@ -37,7 +37,7 @@ qiime feature-classifier classify-sklearn \
 qiime feature-table filter-samples \
   --i-table table.qza \
   --m-metadata-file parkinsons_metadata.txt \
-  --p-where "[Disease]='Control'" \
+  --p-where "[Disease]='PD'" \
   --o-filtered-table control-table.qza
   
 qiime taxa filter-table \
