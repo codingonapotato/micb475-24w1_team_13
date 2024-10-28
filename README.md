@@ -4,7 +4,7 @@
 
 ### Upcoming
 
-- TBD
+- [October 28](./meeting_minutes/2024_10_28.md)
 
 ### September
 
