@@ -123,3 +123,11 @@ qiime feature-table summarize \
       --m-metadata-file pd_metadata_bdi_categorized.txt \
       --o-visualization alpha-rarefaction.qzv
     ```
+4. Export `table-no-mitochondria-no-chloroplast.qza` as a .txt file
+    ```
+    qiime tools export \
+      --input-path table-no-mitochondria-no-chloroplast.qza \
+      --output-path out 
+
+    biom convert -i feature-table.biom --to-tsv -o feature-table.txt
+    ```
