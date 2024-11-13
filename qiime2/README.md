@@ -2,18 +2,22 @@
 
 Script used so far
 
-### import data in qiime and demultiplex
+### Import data in qiime and demultiplex
+```
 qiime tools import \
   --type "SampleData[SequencesWithQuality]" \
   --input-format SingleEndFastqManifestPhred33V2 \
   --input-path parkinsons_manifest.txt \
   --output-path ./demux.qza
-### visualize demultiplexed data
+```
+### Visualize demultiplexed data
+```
 qiime demux summarize \
   --i-data demux.qza \
   --o-visualization demux.qzv
-
-### denoise
+```
+### Denoise
+```
 qiime quality-filter q-score \
  --i-demux demux.qza \
  --o-filtered-sequences demux-filtered.qza \
@@ -26,14 +30,16 @@ qiime deblur denoise-16S \
   --o-table table.qza \
   --p-sample-stats \
   --o-stats deblur-stats.qza
-
+```
 ### Taxonomic analysis
+```
 qiime feature-classifier classify-sklearn \
   --i-classifier /mnt/datasets/classifiers/silva-138-99-515-806-nb-classifier.qza \
   --i-reads rep-seqs.qza \
   --o-classification taxonomy.qza
-  
-### fitler data to only healthy patients and no mito/chloro
+```
+### Filter data to only healthy patients and no mito/chloro
+```
 qiime feature-table filter-samples \
   --i-table table.qza \
   --m-metadata-file parkinsons_metadata.txt \
@@ -45,22 +51,25 @@ qiime taxa filter-table \
   --i-taxonomy taxonomy.qza \
   --p-exclude mitochondria,chloroplast \
   --o-filtered-table table-no-mitochondria-no-chloroplast.qza
-
-### visualize data after denoising and filtering
+```
+### Visualize data after denoising and filtering
+```
 qiime feature-table summarize \
   --i-table table-no-mitochondria-no-chloroplast.qza \
   --o-visualization table-no-mitochondria-no-chloroplast.qzv \
   --m-sample-metadata-file parkinsons_metadata.txt 
-
+```
 ### Generate a tree for phylogenetic diversity analyses
+```
 qiime phylogeny align-to-tree-mafft-fasttree \
   --i-sequences rep-seqs.qza \
   --o-alignment aligned-rep-seqs.qza \
   --o-masked-alignment masked-aligned-rep-seqs.qza \
   --o-tree unrooted-tree.qza \
   --o-rooted-tree rooted-tree.qza 
-
+```
 ### Alpha-rarefaction
+```
 qiime diversity alpha-rarefaction \
   --i-table table-no-mitochondria-no-chloroplast.qza \
   --i-phylogeny rooted-tree.qza \
@@ -72,8 +81,7 @@ qiime feature-table summarize \
   --i-table table.qza \
   --o-visualization table.qzv \
   --m-sample-metadata-file parkinsons_metadata.txt 
-
-
+```
 # A2/A3 Qiime2 Workflow
   > Prequisites: Run `categorize_metadata_by_bdi.R` to generate an updated metadata file with new column for BDI category ('low' or 'high')
 
@@ -131,3 +139,77 @@ qiime feature-table summarize \
 
     biom convert -i feature-table.biom --to-tsv -o feature-table.txt
     ```
+
+# A3 Qiime2 Workflow
+### Filter samples based on BDI_category and Antidepressant_use
+```
+qiime feature-table filter-samples \
+  --i-table table-no-mitochondria-no-chloroplast.qza \
+  --m-metadata-file a2/pd_metadata_bdi_categorized.txt \
+  --p-where "[BDI_category] IN ('low', 'high') AND [Antidepressant_use] IN ('Yes', 'No')" \
+  --o-filtered-table a3_filtered-table.qza
+```
+### Generate core diversity metrics on filtered data
+```
+qiime diversity core-metrics-phylogenetic \
+  --i-phylogeny rooted-tree.qza \
+  --i-table a3_filtered-table.qza \
+  --p-sampling-depth 5696 \
+  --m-metadata-file a2/pd_metadata_bdi_categorized.txt \
+  --output-dir a3_filtered-core-metrics-results
+```
+## Alpha diversity
+### Shannon Diversity
+```
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity a3_filtered-core-metrics-results/shannon_vector.qza \
+  --m-metadata-file a2/pd_metadata_bdi_categorized.txt \
+  --o-visualization a3_filtered-shannon-group-significance.qzv
+```
+### Faith's Phylogenetic Diversity
+```
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity a3_filtered-core-metrics-results/faith_pd_vector.qza \
+  --m-metadata-file a2/pd_metadata_bdi_categorized.txt \
+  --o-visualization a3_filtered-faith-pd-group-significance.qzv
+```
+### Evenness (Pielou's)
+```
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity a3_filtered-core-metrics-results/evenness_vector.qza \
+  --m-metadata-file a2/pd_metadata_bdi_categorized.txt \
+  --o-visualization a3_filtered-evenness-group-significance.qzv
+```
+## Beta diversity
+### Unweighted unifrac
+```
+qiime diversity beta-group-significance \
+  --i-distance-matrix a3_filtered-core-metrics-results/unweighted_unifrac_distance_matrix.qza \
+  --m-metadata-file a2/pd_metadata_bdi_categorized.txt \
+  --o-visualization a3_filtered-core-metrics-results/unweighted-unifrac-body-site-significance.qzv \
+  --p-pairwise
+```
+### Weighted unifrac
+```
+qiime diversity beta-group-significance \
+  --i-distance-matrix a3_filtered-core-metrics-results/weighted_unifrac_distance_matrix.qza \
+  --m-metadata-file a2/pd_metadata_bdi_categorized.txt \
+  --o-visualization a3_filtered-core-metrics-results/weighted-unifrac-body-site-significance.qzv \
+  --p-pairwise
+```
+### Jaccard
+```
+qiime diversity beta-group-significance \
+  --i-distance-matrix a3_filtered-core-metrics-results/jaccard_distance_matrix.qza \
+  --m-metadata-file a2/pd_metadata_bdi_categorized.txt \
+  --o-visualization a3_filtered-core-metrics-results/jaccard_distance_matrix.qza \
+  --p-pairwise
+```
+### Bray-Curtis
+```
+qiime diversity beta-group-significance \
+  --i-distance-matrix a3_filtered-core-metrics-results/bray_curtis_distance_matrix.qza \
+  --m-metadata-file a2/pd_metadata_bdi_categorized.txt \
+  --o-visualization a3_filtered-core-metrics-results/bray_curtis_distance_matrix.qza \
+  --p-pairwise
+```
