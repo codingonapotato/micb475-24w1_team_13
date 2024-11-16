@@ -131,3 +131,17 @@ qiime feature-table summarize \
 
     biom convert -i feature-table.biom --to-tsv -o feature-table.txt
     ```
+
+5.  Export `taxonomy.qza` as a .tsv file
+    ```
+    qiime tools export \
+      --input-path taxonomy.qza \
+      --output-path out
+    ```
+  
+6. Export `rooted-tree.qza` as a .nwk file
+    ```
+    qiime tools export \
+      --input-path rooted-tree.qza \
+      --output-path out
+    ```
