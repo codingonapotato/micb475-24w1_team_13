@@ -52,7 +52,10 @@ final_metadata <- combo_metadata %>% select(`#SampleID`,
                                             BDI_category, 
                                             Antidepressant_use,
                                             BDI_category_antidepressant_use)
+#### Print stats ####
+summary_table <- final_metadata %>% group_by(BDI_category_antidepressant_use) %>% tally()
+summary_table
 
 #### Export BDI categorized metadata as a new file ####
 export_file_path <- "pd_filtered_final_metadata.txt"
-write_tsv(combo_metadata, export_file_path)
+write_tsv(final_metadata, export_file_path)
