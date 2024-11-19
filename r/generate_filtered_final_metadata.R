@@ -22,9 +22,15 @@ HIGH_BDI_LOWER_THRESHOLD <- 16
 #### Generate new column of metadata to categorize by BDI score ####
 updated_metadata <- pd_metadata %>%
   mutate(BDI_category = BDI_depression_score %>%
-    map_chr(function(x) 
-      if (x <= LOW_BDI_UPPER_THRESHOLD) "low" else if (x >= HIGH_BDI_LOWER_THRESHOLD) "high" 
-      else "medium"))
+    map_chr(function(x) {
+      if (x <= LOW_BDI_UPPER_THRESHOLD) {
+        "low"
+      } else if (x >= HIGH_BDI_LOWER_THRESHOLD) {
+        "high"
+      } else {
+        "medium"
+      }
+    }))
 
 #### Filter for only rows with a BDI_category of "low" or "high" ####
 high_low_metadata <- updated_metadata %>% filter(BDI_category != "medium")
@@ -35,8 +41,10 @@ high_low_metadata <- updated_metadata %>% filter(BDI_category != "medium")
 # 2. "low+no"
 # 3. "high+yes"
 # 4. "high+no"
-final_metadata <- high_low_metadata %>% mutate(BDI_category_antidepressant_use = 
-                                                tolower(paste(as.character(BDI_category), as.character(Antidepressant_use), sep="+")))
+final_metadata <- high_low_metadata %>% mutate(
+  BDI_category_antidepressant_use =
+    tolower(paste(as.character(BDI_category), as.character(Antidepressant_use), sep = "+"))
+)
 
 #### Export BDI categorized metadata as a new file ####
 export_file_path <- "pd_filtered_final_metadata.tsv"
