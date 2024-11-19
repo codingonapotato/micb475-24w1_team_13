@@ -1,7 +1,7 @@
 library("tidyverse")
 
 #### Load PD metadata ####
-file_path <- "./parkinsons_metadata.txt"
+file_path <- "raw/parkinsons_metadata.txt"
 metadata <- read_tsv(file_path)
 
 #### Filter for Disease status == "PD" ####

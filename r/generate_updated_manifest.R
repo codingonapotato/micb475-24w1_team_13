@@ -2,7 +2,7 @@
 library(tidyverse)
 
 #### Load manifest and final filtered metadata ####
-pd_manifest <- read_tsv("parkinsons_manifest.txt")
+pd_manifest <- read_tsv("raw/parkinsons_manifest.txt")
 filtered_final_metadata <- read_tsv("pd_filtered_final_metadata.tsv")
 
 #### Subset pd_manifest such that only rows with sample ID in filtered_final_metadata are included ####
