@@ -41,11 +41,18 @@ high_low_metadata <- updated_metadata %>% filter(BDI_category != "medium")
 # 2. "low+no"
 # 3. "high+yes"
 # 4. "high+no"
-final_metadata <- high_low_metadata %>% mutate(
+combo_metadata <- high_low_metadata %>% mutate(
   BDI_category_antidepressant_use =
     tolower(paste(as.character(BDI_category), as.character(Antidepressant_use), sep = "+"))
 )
 
+#### Subset combo_metadata to only include columns of interest in our metadata file ####
+final_metadata <- combo_metadata %>% select(`#SampleID`, 
+                                            BDI_depression_score, 
+                                            BDI_category, 
+                                            Antidepressant_use,
+                                            BDI_category_antidepressant_use)
+
 #### Export BDI categorized metadata as a new file ####
-export_file_path <- "pd_filtered_final_metadata.tsv"
-write_tsv(updated_metadata, export_file_path)
+export_file_path <- "pd_filtered_final_metadata.txt"
+write_tsv(combo_metadata, export_file_path)
