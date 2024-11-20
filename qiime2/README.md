@@ -41,7 +41,7 @@ qiime feature-classifier classify-sklearn \
 ### Filter data to no mito/chloro
 ```
 qiime taxa filter-table \
-  --i-table control-table.qza \
+  --i-table table.qza \
   --i-taxonomy taxonomy.qza \
   --p-exclude mitochondria,chloroplast \
   --o-filtered-table table-no-mitochondria-no-chloroplast.qza
@@ -67,7 +67,7 @@ qiime phylogeny align-to-tree-mafft-fasttree \
 qiime diversity alpha-rarefaction \
   --i-table table-no-mitochondria-no-chloroplast.qza \
   --i-phylogeny rooted-tree.qza \
-  --p-max-depth 14000 \
+  --p-max-depth 13000 \
   --m-metadata-file parkinsons_metadata.txt \
   --o-visualization alpha-rarefaction.qzv
 
