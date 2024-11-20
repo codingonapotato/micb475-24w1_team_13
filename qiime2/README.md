@@ -7,7 +7,7 @@ Script used so far
 qiime tools import \
   --type "SampleData[SequencesWithQuality]" \
   --input-format SingleEndFastqManifestPhred33V2 \
-  --input-path parkinsons_manifest.txt \
+  --input-path filtered_parkinsons_manifest.txt \
   --output-path ./demux.qza
 ```
 ### Visualize demultiplexed data
@@ -38,14 +38,8 @@ qiime feature-classifier classify-sklearn \
   --i-reads rep-seqs.qza \
   --o-classification taxonomy.qza
 ```
-### Filter data to only healthy patients and no mito/chloro
+### Filter data to no mito/chloro
 ```
-qiime feature-table filter-samples \
-  --i-table table.qza \
-  --m-metadata-file parkinsons_metadata.txt \
-  --p-where "[Disease]='PD'" \
-  --o-filtered-table control-table.qza
-  
 qiime taxa filter-table \
   --i-table control-table.qza \
   --i-taxonomy taxonomy.qza \
