@@ -1,87 +1,62 @@
-print("chat are we cooked")
-print("chat are we cooked?")
-print("yes we are!")
-23 * 3
-nice
-"nice"
-lilwewe
-lilwewe <- 23 * 3
-lilwewe
-lilwewe
-q()
-load("C:/Users/Soon to be Moe/Desktop/github/micb475-24w1_team_13/r/aim2/data/pd_rare.RData")
-View(pd_rare)
-setwd("C:/Users/Soon to be Moe/Desktop/github/micb475-24w1_team_13/r")
 library(phyloseq)
 library(ape) # importing trees
 library(tidyverse)
 library(vegan)
+
 #### Load data ####
 # Change file paths as necessary
 metafp <- "data/pd_filtered_metadata.txt"
 meta <- read_delim(metafp, delim="\t")
+
 otufp <- "data/feature-table.txt"
 otu <- read_delim(file = otufp, delim="\t", skip=1)
+
 taxfp <- "data/taxonomy.tsv"
 tax <- read_delim(taxfp, delim="\t")
+
 phylotreefp <- "data/tree.nwk"
 phylotree <- read.tree(phylotreefp)
-View(otu)
+
+#### Format OTU table ####
+# OTU tables should be a matrix
+# with rownames and colnames as OTUs and sampleIDs, respectively
+# Note: tibbles do not allow rownames so if you imported with read_delim, change back
+
 # save everything except first column (OTU ID) into a matrix
 otu_mat <- as.matrix(otu[,-1])
-View(otu_mat)
 # Make first column (#OTU ID) the rownames of the new matrix
 rownames(otu_mat) <- otu$`#OTU ID`
 # Use the "otu_table" function to make an OTU table
-OTU <- otu_table(otu_mat, taxa_are_rows = TRUE)
+OTU <- otu_table(otu_mat, taxa_are_rows = TRUE) 
 class(OTU)
-View(otu_mat)
+
 #### Format sample metadata ####
 # Save everything except sampleid as new data frame
 samp_df <- as.data.frame(meta[,-1])
-# Make sampleids the rownames
-rownames(samp_df)<- meta$'sample-id'
-#### Format sample metadata ####
-# Save everything except sampleid as new data frame
-samp_df <- as.data.frame(meta[,-1])
-View(samp_df)
-View(meta)
-View(meta)
 # Make sampleids the rownames
 rownames(samp_df)<- meta$'#SampleID'
-View(samp_df)
-View(meta)
-View(samp_df)
 # Make phyloseq sample data with sample_data() function
 SAMP <- sample_data(samp_df)
 class(SAMP)
+
 #### Formatting taxonomy ####
 # Convert taxon strings to a table with separate taxa rank columns
 tax_mat <- tax %>% select(-Confidence)%>%
-separate(col=Taxon, sep="; "
-, into = c("Domain","Phylum","Class","Order","Family","Genus","Species")) %>%
-as.matrix() # Saving as a matrix
-# Save everything except feature IDs
+  separate(col=Taxon, sep="; "
+           , into = c("Domain","Phylum","Class","Order","Family","Genus","Species")) %>%
+  as.matrix() # Saving as a matrix
+# Save everything except feature IDs 
 tax_mat <- tax_mat[,-1]
 # Make sampleids the rownames
 rownames(tax_mat) <- tax$`Feature ID`
 # Make taxa table
 TAX <- tax_table(tax_mat)
 class(TAX)
-View(tax)
-View(tax_mat)
-#### Create phyloseq object ####
-# Merge all into a phyloseq object
-mpt <- phyloseq(OTU, SAMP, TAX, phylotree)
-#### Looking at phyloseq object #####
-# View components of phyloseq object with the following commands
-otu_table(depression)
-sample_data(depression)
-tax_table(depression)
-phy_tree(depression)
+
 #### Create phyloseq object ####
 # Merge all into a phyloseq object
 depression <- phyloseq(OTU, SAMP, TAX, phylotree)
+
 #### Looking at phyloseq object #####
 # View components of phyloseq object with the following commands
 otu_table(depression)
