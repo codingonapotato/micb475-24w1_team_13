@@ -72,3 +72,27 @@ phy_tree(depression)
 
 #### Save phyloseq object ####
 save(depression, file = "data/depression_phyloseq.RData")
+
+#### Conduct PERMANOVA and create distance matrices ####
+# Weighted Unifrac
+dm_wunifrac <- UniFrac(depression, weighted=TRUE) 
+adonis2(dm_wunifrac ~ Antidepressant_use*BDI_category, data = meta)
+
+# Unweighted Unifrac
+dm_unifrac <- UniFrac(depression, weighted=FALSE)
+adonis2(dm_unifrac ~ Antidepressant_use*BDI_category, data = meta)
+
+# Bray Curtis
+dm_braycurtis <- vegdist(t(otu_table(depression)), method="bray")
+adonis2(dm_braycurtis ~ Antidepressant_use*BDI_category, data = meta)
+
+#### Plot as an ordination to a PCoA plot ####
+ord.unifrac <- ordinate(depression, method="PCoA", distance="unifrac")
+plot_ordination(depression, ord.unifrac, color="BDI_category", shape = "Antidepressant_use")
+
+ord.wunifrac <- ordinate(depression, method="PCoA", distance="wunifrac")
+plot_ordination(depression, ord.wunifrac, color="BDI_category", shape = "Antidepressant_use")
+
+ord.bray <- ordinate(depression, method="PCoA", distance="bray")
+plot_ordination(depression, ord.bray, color="BDI_category", shape = "Antidepressant_use")
+
