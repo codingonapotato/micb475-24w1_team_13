@@ -5,7 +5,7 @@ library(vegan)
 
 #### Load data ####
 # Change file paths as necessary
-metafp <- "data/pd_filtered_metadata.txt"
+metafp <- "data/pd_filtered_final_metadata.txt"
 meta <- read_delim(metafp, delim = "\t")
 
 otufp <- "data/feature-table.txt"
@@ -96,3 +96,4 @@ plot_ordination(depression, ord.wunifrac, color="BDI_category", shape = "Antidep
 ord.bray <- ordinate(depression, method="PCoA", distance="bray")
 plot_ordination(depression, ord.bray, color="BDI_category", shape = "Antidepressant_use")
 
+#### ANCOM ####
