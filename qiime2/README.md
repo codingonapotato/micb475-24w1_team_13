@@ -51,7 +51,7 @@ qiime taxa filter-table \
 qiime feature-table summarize \
   --i-table table-no-mitochondria-no-chloroplast.qza \
   --o-visualization table-no-mitochondria-no-chloroplast.qzv \
-  --m-sample-metadata-file parkinsons_metadata.txt 
+  --m-sample-metadata-file pd_filtered_metadata.txt 
 ```
 ### Generate a tree for phylogenetic diversity analyses
 ```
@@ -68,14 +68,61 @@ qiime diversity alpha-rarefaction \
   --i-table table-no-mitochondria-no-chloroplast.qza \
   --i-phylogeny rooted-tree.qza \
   --p-max-depth 13000 \
-  --m-metadata-file parkinsons_metadata.txt \
+  --m-metadata-file pd_filtered_metadata.txt \
   --o-visualization alpha-rarefaction.qzv
 
-qiime feature-table summarize \
-  --i-table table.qza \
-  --o-visualization table.qzv \
-  --m-sample-metadata-file parkinsons_metadata.txt 
 ```
+### Core metrics
+```
+qiime diversity core-metrics-phylogenetic \
+  --i-phylogeny rooted-tree.qza \
+  --i-table table-no-mitochondria-no-chloroplast.qza \
+  --p-sampling-depth 4709 \
+  --m-metadata-file pd_filtered_metadata.txt \
+  --output-dir core-metrics-results
+
+# Calculate alpha-group-significance
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity core-metrics-results/faith_pd_vector.qza \
+  --m-metadata-file pd_filtered_metadata.txt \
+  --o-visualization core-metrics-results/faith-pd-group-significance.qzv
+
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity core-metrics-results/evenness_vector.qza \
+  --m-metadata-file pd_filtered_metadata.txt \
+  --o-visualization core-metrics-results/evenness-group-significance.qzv
+  
+# Calculate beta-group-significance
+qiime diversity beta-group-significance \
+  --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza \
+  --m-metadata-file pd_filtered_metadata.txt \
+  --m-metadata-column BDI_category_antidepressant_use \
+  --o-visualization core-metrics-results/unweighted-unifrac-BA-significance.qzv \
+  --p-pairwise
+
+qiime diversity beta-group-significance \
+  --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza \
+  --m-metadata-file pd_filtered_metadata.txt \
+  --m-metadata-column Antidepressant_use \
+  --o-visualization core-metrics-results/unweighted-unifrac-A-significance.qzv \
+  --p-pairwise
+
+qiime diversity beta-group-significance \
+  --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza \
+  --m-metadata-file pd_filtered_metadata.txt \
+  --m-metadata-column BDI_category \
+  --o-visualization core-metrics-results/unweighted-unifrac-B-significance.qzv \
+  --p-pairwise
+
+```
+
+
+
+
+
+
+
+
 # A2/A3 Qiime2 Workflow
   > Prequisites: Run `categorize_metadata_by_bdi.R` to generate an updated metadata file with new column for BDI category ('low' or 'high')
 
