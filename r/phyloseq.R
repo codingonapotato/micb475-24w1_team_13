@@ -131,7 +131,8 @@ sigASVs_hnhy <- tax_table(depression_DESeq_hnhy) %>% as.data.frame() %>%
 hnhy <- ggplot(sigASVs_hnhy) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
-  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))+
+  ggtitle("High/No vs High/Yes")                                          
 hnhy
 
 ## high/no vs low/yes
@@ -162,7 +163,8 @@ sigASVs_hnly <- tax_table(depression_DESeq) %>% as.data.frame() %>%
 hnly <- ggplot(sigASVs_hnly) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
-  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))+
+  ggtitle("High/No vs Low/Yes")                                          
 hnly
 
 ## high/no vs low/no
@@ -193,6 +195,7 @@ sigASVs_hnln <- tax_table(depression_DESeq) %>% as.data.frame() %>%
 hnln <- ggplot(sigASVs_hnln) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
-  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))+
+  ggtitle("High/No vs Low/No")                                      
 hnln
 
