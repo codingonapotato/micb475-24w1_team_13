@@ -5,11 +5,15 @@ library(randomcoloR)
 library(ANCOMBC)
 library(microbiome)
 
+set.seed(711)
+
 load("depression_phyloseq.Rdata")
 
+# Aggretate data to family level for analysis
 family = tax_glom(depression,'Family')
 ntaxa(depression); ntaxa(family)
 
+# Optional filtering
 calculate_relative_abundance <- function(x) x / sum(x)
 total_counts <- taxa_sums(family)
 relative_abundance <- calculate_relative_abundance(total_counts)
@@ -23,6 +27,7 @@ sample_data(family)$BDI_category_antidepressant_use <- factor(
   levels = c("low+no", "low+yes", "high+no", "high+yes")
 )
 
+# ANCOM-BC
 ancom.family = ancombc(phyloseq = family,
                        formula = 'BDI_category_antidepressant_use',
                        p_adj_method = "fdr",
@@ -31,6 +36,7 @@ ancom.family = ancombc(phyloseq = family,
                        group = 'BDI_category_antidepressant_use',
                        struc_zero = T)
 
+# Update column names for each part of the results
 colnames(ancom.family$res$lfc) = paste(colnames(ancom.family$res$lfc),'_beta',sep='')
 colnames(ancom.family$res$se) = paste(colnames(ancom.family$res$se),'_se',sep='')
 colnames(ancom.family$res$W) = paste(colnames(ancom.family$res$W),'_W',sep='')
@@ -41,13 +47,10 @@ colnames(ancom.family$res$diff_abn) = paste(colnames(ancom.family$res$diff_abn),
 results = lapply(ancom.family$res,function(x) rownames_to_column(x,'Family')) %>% 
   lapply(as_tibble) %>% reduce(full_join)
 
+# Remove (Intercept) terms
 results = results %>% dplyr::select(-contains('Intercept'))
 
-srv = Vectorize(str_remove)
-colnames(results) = srv(colnames(results),'Fractionpos_')
-colnames(results)
-
-# Plotting the results
+# Plotting the results with significant taxa
 q_val_columns <- grep("_q_val$", colnames(results), value = TRUE)
 results.sig = results %>%
   filter(if_any(all_of(q_val_columns), ~ . < 0.05))
@@ -79,13 +82,16 @@ for(b in bug){
     scale_fill_manual(values = colors) +
     xlab('BDI_category_antidepressant_use') + ylab(paste(b,'(% Ab.)',sep=' '))
   print(p)
-  ggsave(paste('tss_',b,'.jpeg',sep=''),height = 5,width = 5)
+  ggsave(paste('ancom3_',b,'.jpeg',sep=''),height = 5,width = 5)
 }
 
+# Save ANCOM results
 saveRDS(ancom.family,'ancom_results_family.rds')
 
+# Save reseults as .csv
 write.csv(results,'ancom_results_family.csv',row.names = F)
 
+#Save results as excel, with significant results on separate sheet
 library(writexl)
 write_xlsx(list('all_results' = results,'sig_results' = results.sig),
            'ancom_results_family.xlsx')
