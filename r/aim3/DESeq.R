@@ -195,3 +195,80 @@ lyln <- ggplot(sigASVs_lyln) +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))+
   ggtitle("Low/Yes vs Low/No")
 lyln
+
+
+#### Comparing between high vs low BDI
+bdi_deseq_object <- phyloseq_to_deseq2(depression_plus1, ~BDI_category)
+bdi_DESeq_output <- DESeq(bdi_deseq_object)
+
+res_bdi <- results(bdi_DESeq_output, tidy=TRUE,
+                    contrast = c("BDI_category","high", "low"))
+# Plot results as volcano plot
+vol_plot_bdi <- res_bdi %>%
+  mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
+  ggplot() +
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+vol_plot_bdi
+ggsave(filename="vol_plot_bdi.png",vol_plot_bdi)
+# To get table of results (Significant ASVs)
+sigASVs_bdi <- res_bdi %>% 
+  filter(padj<0.01 & abs(log2FoldChange)>2) %>%
+  dplyr::rename(ASV=row)
+# Get only asv names
+sigASVs_bdi_vec <- sigASVs_bdi %>%
+  pull(ASV)
+# Prune phyloseq file
+depression_DESeq_bdi <- prune_taxa(sigASVs_bdi_vec,depression_plus1)
+sigASVs_bdi <- tax_table(depression_DESeq_bdi) %>% as.data.frame() %>%
+  rownames_to_column(var="ASV") %>%
+  right_join(sigASVs_bdi) %>%
+  arrange(log2FoldChange) %>%
+  mutate(Genus = make.unique(Genus)) %>%
+  mutate(Genus = factor(Genus, levels=unique(Genus)))
+# Plot results as bar plot
+bdi <- ggplot(sigASVs_bdi) +
+  geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
+  geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5)) +
+  ggtitle("High vs Low BDI")
+bdi
+ggsave(filename="DESeq_bdi.png",bdi)
+
+
+#### Comparing between no vs yes antidepressant use
+atdp_deseq_object <- phyloseq_to_deseq2(depression_plus1, ~Antidepressant_use)
+atdp_DESeq_output <- DESeq(atdp_deseq_object)
+
+res_atdp <- results(atdp_DESeq_output, tidy=TRUE,
+                   contrast = c("Antidepressant_use","No", "Yes"))
+# Plot results as volcano plot
+vol_plot_atdp <- res_atdp %>%
+  mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
+  ggplot() +
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+vol_plot_atdp
+ggsave(filename="vol_plot_atdp.png",vol_plot_atdp)
+# To get table of results (Significant ASVs)
+sigASVs_atdp <- res_atdp %>% 
+  filter(padj<0.01 & abs(log2FoldChange)>2) %>%
+  dplyr::rename(ASV=row)
+# Get only asv names
+sigASVs_atdp_vec <- sigASVs_atdp %>%
+  pull(ASV)
+# Prune phyloseq file
+depression_DESeq_atdp <- prune_taxa(sigASVs_atdp_vec,depression_plus1)
+sigASVs_atdp <- tax_table(depression_DESeq_atdp) %>% as.data.frame() %>%
+  rownames_to_column(var="ASV") %>%
+  right_join(sigASVs_atdp) %>%
+  arrange(log2FoldChange) %>%
+  mutate(Genus = make.unique(Genus)) %>%
+  mutate(Genus = factor(Genus, levels=unique(Genus)))
+# Plot results as bar plot
+atdp <- ggplot(sigASVs_atdp) +
+  geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
+  geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5)) +
+  ggtitle("No vs Yes Antidepressant Use")
+atdp
+ggsave(filename="DESeq_atdp.png",atdp)
+                                            
