@@ -5,7 +5,7 @@ library(vegan)
 
 #### Load data ####
 # Change file paths as necessary
-metafp <- "data/pd_filtered_final_metadata.txt"
+metafp <- "data/pd_filtered_metadata.txt"
 meta <- read_delim(metafp, delim = "\t")
 
 otufp <- "data/feature-table.txt"
@@ -67,9 +67,15 @@ sample_data(depression)
 tax_table(depression)
 phy_tree(depression)
 
+#### rarefy for diversity metrics ####
+
+rarecurve(t(as.data.frame(otu_table(depression))), cex=0.1)
+depression_rare <- rarefy_even_depth(depression, rngseed = 1, sample.size = 4907)
+
 #### Quality Control ####
 # TODO(?)
 
 #### Save phyloseq object ####
 save(depression, file = "data/depression_phyloseq.RData")
+save(depression_rare, file = "data/phyloseq_rare.RData")
 
