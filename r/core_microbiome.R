@@ -58,23 +58,29 @@ bdi_anti_list_full <- list(bdi_anti_high_no = bdi_anti_high_no_ASVs,
 #### Generate Venn Diagrams by metadata group ####
 # Antidepressant_use
 anti_venn <- ggVennDiagram(x = anti_list_full) +
-  scale_x_continuous(expand = expansion(mult = .7))
+  scale_x_continuous(expand = expansion(mult = .5)) +
+  theme(plot.background = element_rect(fill = "white", color = NA),
+        panel.background = element_rect(fill = "white", color = NA))
+anti_venn
 
 # BDI_category
 bdi_venn <- ggVennDiagram(x = bdi_list_full) +
-  scale_x_continuous(expand = expansion(mult = .3))
+  scale_x_continuous(expand = expansion(mult = .3)) +
+  theme(plot.background = element_rect(fill = "white", color = NA),
+        panel.background = element_rect(fill = "white", color = NA))
 
 # BDI_category_antidepressant_use
 bdi_anti_venn <- ggVennDiagram(x = bdi_anti_list_full) +
-  scale_x_continuous(expand = expansion(mult = .2))
-bdi_anti_venn
+  scale_x_continuous(expand = expansion(mult = .2)) +
+  theme(plot.background = element_rect(fill = "white", color = NA),
+        panel.background = element_rect(fill = "white", color = NA))
 
 #### Save plots to file ####
 # Constant for dimensions
-WIDTH <- 7
+WIDTH <- 9
 HEIGHT <- 5
 ggsave(anti_venn, filename = "figures/antidepressant_use_venn_diagram.png", 
-       width=WIDTH, height=HEIGHT)
+       width=WIDTH, height=HEIGHT) 
 ggsave(bdi_venn, filename = "figures/bdi_category_venn_diagram.png", 
        width=WIDTH, height=HEIGHT)
 ggsave(bdi_anti_venn, 
