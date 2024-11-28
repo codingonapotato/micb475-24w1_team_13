@@ -2,16 +2,205 @@ library(phyloseq)
 library(ape)
 library(tidyverse)
 library(picante)
+library(ggsignif)
+library(vegan)
 
-load("depression_phyloseq.Rdata")
+
+load("data/depression_phyloseq.Rdata")
+load("data/depression_phyloseq_rare.Rdata")
+
+#### alpha diversity ####
+### richness measures ###
+gg_richnessA <- plot_richness(depression_rare, x = "Antidepressant_use", measure = c("shannon", "Observed"))+
+    xlab("Antidepressant Use")+
+    geom_boxplot()
+
+gg_richnessB <- plot_richness(depression_rare, x = "BDI_category", measure = c("shannon", "Observed"))+
+  xlab("BDI Category")+
+  geom_boxplot()
+
+gg_richnessC <- plot_richness(depression_rare, x = "BDI_category_antidepressant_use", measure = c("shannon","Observed"))+
+  xlab("BDI Category and Antidepressant Use")+
+  geom_boxplot()
+
+gg_richnessA
+gg_richnessB
+gg_richnessC
+
+ggsave(filename = "figures/richness_plot_A.png", 
+       gg_richnessA,
+       height = 4, width = 6)
+
+ggsave(filename = "figures/richness_plot_B.png", 
+       gg_richnessB,
+       height = 4, width = 6)
+
+ggsave(filename = "figures/richness_plot_C.png", 
+       gg_richnessC,
+       height = 4, width = 6)
+
+### faith's PD ##
+
+phylo_dist <- pd(t(otu_table(depression_rare)), phy_tree(depression_rare),
+                 include.root = F)
+
+sample_data(depression_rare)$PD <- phylo_dist$PD
+
+plot.pdA <- ggplot(sample_data(depression_rare), aes(Antidepressant_use, PD)) +
+  geom_boxplot()+
+  xlab("Antidepressant Use")+
+  ylab("Phylogenetic Diversity")
+
+plot.pdB <- ggplot(sample_data(depression_rare), aes(BDI_category, PD)) +
+  geom_boxplot()+
+  xlab("BDI Category")+
+  ylab("Phylogenetic Diversity")
+
+plot.pdC <- ggplot(sample_data(depression_rare), aes(BDI_category_antidepressant_use, PD)) +
+  geom_boxplot()+
+  xlab("BDI Category and Antidepressant Use")+
+  ylab("Phylogenetic Diversity")
+
+ggsave(filename = "figures/PD_plot_A.png", 
+       plot.pdA,
+       height = 4, width = 6)
+
+ggsave(filename = "figures/PD_plot_B.png", 
+       plot.pdB,
+       height = 4, width = 6)
+
+ggsave(filename = "figures/PD_plot_C.png", 
+       plot.pdC,
+       height = 4, width = 6)
 
 #### Beta Diversity ####
-# Plot as an ordination to a PCoA plot ####
-ord.unifrac <- ordinate(depression, method="PCoA", distance="unifrac")
-plot_ordination(depression, ord.unifrac, color="BDI_category", shape = "Antidepressant_use")
+#### stats ####
+dm_wunifrac <- UniFrac(depression_rare, weighted=TRUE) # Weighted UniFrac
+dm_unifrac <- UniFrac(depression_rare, weighted=FALSE) # unweighted UniFrac
+dm_bray <- vegdist(t(otu_table(depression_rare)), method="bray") # Bray-curtis
+dm_jaccard <- vegdist(t(otu_table(depression_rare)), method="jaccard") # Jaccard
 
-ord.wunifrac <- ordinate(depression, method="PCoA", distance="wunifrac")
-plot_ordination(depression, ord.wunifrac, color="BDI_category", shape = "Antidepressant_use")
+adonis2(dm_wunifrac ~ BDI_category*Antidepressant_use, data=samp_dat_wdiv)
+adonis2(dm_unifrac ~ BDI_category*Antidepressant_use, data=samp_dat_wdiv)
+adonis2(dm_bray ~ BDI_category*Antidepressant_use, data=samp_dat_wdiv)
+adonis2(dm_jaccard ~ BDI_category*Antidepressant_use, data=samp_dat_wdiv)
 
-ord.bray <- ordinate(depression, method="PCoA", distance="bray")
-plot_ordination(depression, ord.bray, color="BDI_category", shape = "Antidepressant_use")
+bray <- distance(depression_rare, method = "bray")
+jaccard <- distance(depression_rare, method = "jaccard")
+unifrac <- distance(depression_rare, method = "unifrac")
+wunifrac <- distance(depression_rare, method = "wunifrac")
+
+pcoa_b <- ordinate(depression_rare, method = "PCoA", distance = bray)
+pcoa_j <- ordinate(depression_rare, method = "PCoA", distance = jaccard)
+pcoa_u <- ordinate(depression_rare, method = "PCoA", distance = unifrac)
+pcoa_w <- ordinate(depression_rare, method = "PCoA", distance = wunifrac)
+
+gg_pcoab <- plot_ordination(depression_rare, pcoa_b, color = "BDI_category_antidepressant_use")+
+  labs(col = "BDI Category and \nAntidepressant Use")+
+  theme(legend.title = element_text(size = 8))+
+  stat_ellipse(type = "norm")
+
+gg_pcoaj <- plot_ordination(depression_rare, pcoa_j, color = "BDI_category_antidepressant_use")+
+  labs(col = "BDI Category and \nAntidepressant Use")+
+  theme(legend.title = element_text(size = 8))
+
+gg_pcoau <- plot_ordination(depression_rare, pcoa_u, color = "BDI_category_antidepressant_use")+
+  labs(col = "BDI Category and \nAntidepressant Use")+
+  theme(legend.title = element_text(size = 8))
+
+gg_pcoaw <- plot_ordination(depression_rare, pcoa_w, color = "BDI_category_antidepressant_use")+
+  labs(col = "BDI Category and \nAntidepressant Use")+
+  theme(legend.title = element_text(size = 8))
+
+ggsave(filename = "figures/gg_pcoab.png", 
+       gg_pcoab,
+       height = 4, width = 6)
+
+ggsave(filename = "figures/gg_pcoaj.png", 
+       gg_pcoaj,
+       height = 4, width = 6)
+
+ggsave(filename = "figures/gg_pcoau.png", 
+       gg_pcoau,
+       height = 4, width = 6)
+
+ggsave(filename = "figures/gg_pcoaw.png", 
+       gg_pcoaw,
+       height = 4, width = 6)
+
+
+#### tax bar plot ####
+plot_bar(depression_rare, fill="Phylum") 
+
+depression_RA <- transform_sample_counts(depression_rare, function(x) x/sum(x))
+
+mpt_phylum <- tax_glom(depression_RA, taxrank = "Phylum", NArm=FALSE)
+
+gg_taxaA <- plot_bar(mpt_phylum, fill="Phylum") + 
+  facet_wrap(.~Antidepressant_use, scales = "free_x")
+
+gg_taxaB <- plot_bar(mpt_phylum, fill="Phylum") + 
+  facet_wrap(.~BDI_category, scales = "free_x")
+
+gg_taxaC <- plot_bar(mpt_phylum, fill="Phylum") + 
+  facet_wrap(.~BDI_category_antidepressant_use, scales = "free_x")
+
+ggsave("figures/plot_taxonomyA.png"
+       , gg_taxaA
+       , height=8, width =12)
+
+ggsave("figures/plot_taxonomyB.png"
+       , gg_taxaB
+       , height=8, width =12)
+
+ggsave("figures/plot_taxonomyC.png"
+       , gg_taxaC
+       , height=8, width =12)
+
+#### stats ####
+### stats of observered and shannon ###
+
+alphadiv <- estimate_richness(depression_rare)
+samp_dat <- sample_data(depression_rare)
+samp_dat_wdiv <- data.frame(samp_dat, alphadiv)
+
+wilcox.test(Observed ~ Antidepressant_use, data=samp_dat_wdiv, exact = FALSE)
+wilcox.test(Shannon ~ Antidepressant_use, data=samp_dat_wdiv, exact = FALSE)
+
+wilcox.test(Observed ~ BDI_category, data=samp_dat_wdiv, exact = FALSE)
+wilcox.test(Shannon ~ BDI_category, data=samp_dat_wdiv, exact = FALSE)
+
+kruskal.test(Observed ~ BDI_category_antidepressant_use, data=samp_dat_wdiv)
+kruskal.test(Shannon ~ BDI_category_antidepressant_use, data=samp_dat_wdiv)
+
+### stats and graph of observed combined ###
+
+lm_ob_vs_site_log <- lm(log(Observed) ~ `BDI_category_antidepressant_use`, data=samp_dat_wdiv)
+anova_ob_vs_site_log <- aov(lm_ob_vs_site_log)
+summary(anova_ob_vs_site_log)
+TukeyHSD(anova_ob_vs_site_log)
+
+samp_dat_wdiv$BDI_category_antidepressant_use <- factor(samp_dat_wdiv$BDI_category_antidepressant_use, levels = c("low+no","low+yes","high+no","high+yes"))
+
+final_obs <- ggplot(samp_dat_wdiv, aes(x=`BDI_category_antidepressant_use`, y=Observed)) +
+  geom_boxplot() +
+  geom_signif(comparisons = list(c("low+no","low+yes"), c("low+no", "high+no"), c("low+no","high+yes")),
+              y_position = c(178, 193, 204),
+              annotations = c("0.80","0.81","0.26"))
+final_obs
+
+### stats and graph of shannon combined ###
+
+lm_sh_vs_site_log <- lm(log(Shannon) ~ `BDI_category_antidepressant_use`, data=samp_dat_wdiv)
+anova_sh_vs_site_log <- aov(lm_sh_vs_site_log)
+summary(anova_sh_vs_site_log)
+TukeyHSD(anova_sh_vs_site_log)
+
+final_sh <- ggplot(samp_dat_wdiv, aes(x=`BDI_category_antidepressant_use`, y=Shannon)) +
+  geom_boxplot() +
+  geom_signif(comparisons = list(c("low+no","low+yes"), c("low+no", "high+no"), c("low+no","high+yes")),
+              y_position = c(4.5, 4.9, 5.3),
+              annotations = c("0.65","0.96","0.95"))
+final_sh
+
+
