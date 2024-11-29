@@ -180,7 +180,7 @@ gg_pcoau <- plot_ordination(depression_rare, pcoa_u, color = "BDI_category_antid
 gg_pcoaw <- plot_ordination(depression_rare, pcoa_w, color = "BDI_category_antidepressant_use")+
   labs(col = "BDI Category and \nAntidepressant Use")+
   theme(legend.title = element_text(size = 8))+
-  stat_ellipse(type = "norm", level = 0.75)
+  stat_ellipse(type = "norm", level = 0.8)
 
 ggsave(filename = "figures/gg_pcoab.png", 
        gg_pcoab,
@@ -194,7 +194,7 @@ ggsave(filename = "figures/gg_pcoau.png",
        gg_pcoau,
        height = 4, width = 6)
 
-ggsave(filename = "figures/gg_pcoaw.png", 
+ggsave(filename = "figures/beta/gg_pcoaw.png", 
        gg_pcoaw,
        height = 4, width = 6)
 
