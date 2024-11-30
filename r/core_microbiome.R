@@ -60,20 +60,26 @@ bdi_anti_list_full <- list(HN = bdi_anti_high_no_ASVs,
 anti_venn <- ggVennDiagram(x = anti_list_full) +
   scale_x_continuous(expand = expansion(mult = .5)) +
   theme(plot.background = element_rect(fill = "white", color = NA),
-        panel.background = element_rect(fill = "white", color = NA))
+        panel.background = element_rect(fill = "white", color = NA),
+        plot.title = element_text(hjust = 0.5, margin=margin(10,0,30,0))) +
+  ggtitle("Antidepressant Use")
 anti_venn
 
 # BDI_category
 bdi_venn <- ggVennDiagram(x = bdi_list_full) +
   scale_x_continuous(expand = expansion(mult = .3)) +
   theme(plot.background = element_rect(fill = "white", color = NA),
-        panel.background = element_rect(fill = "white", color = NA))
+        panel.background = element_rect(fill = "white", color = NA),
+        plot.title = element_text(hjust = 0.5, margin=margin(10,0,30,0))) +
+  ggtitle("BDI Category")
 
 # BDI_category_antidepressant_use
 bdi_anti_venn <- ggVennDiagram(x = bdi_anti_list_full) +
   scale_x_continuous(expand = expansion(mult = .2)) +
   theme(plot.background = element_rect(fill = "white", color = NA),
-        panel.background = element_rect(fill = "white", color = NA))
+        panel.background = element_rect(fill = "white", color = NA),
+        plot.title = element_text(hjust = 0.5, margin=margin(10,0,30,0))) +
+  ggtitle("BDI Category & Antidepressant Use")
 
 #### Save plots to file ####
 # Constant for dimensions
