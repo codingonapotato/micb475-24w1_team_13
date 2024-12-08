@@ -79,7 +79,7 @@ ggsave(filename="DESeq_HN_vs_LY.png",hnly)
 
 #### high/no vs low/no
 res_hnln <- results(DESeq_output, tidy=TRUE,
-                    contrast = c("BDI_category_antidepressant_use","low+no", "high+no"))
+                    contrast = c("BDI_category_antidepressant_use","high+no", "low+no"))
 # Plot results as volcano plot
 vol_plot_hnln <- res_hnln %>%
   mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
