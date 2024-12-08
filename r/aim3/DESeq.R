@@ -45,7 +45,7 @@ ggsave(filename="DESeq_HN_vs_HY.png",hnhy)
 
 #### high/no vs low/yes
 res_hnly <- results(DESeq_output, tidy=TRUE,
-                    contrast = c("BDI_category_antidepressant_use","low+yes", "high+no"))
+                    contrast = c("BDI_category_antidepressant_use","high+no", "low+yes"))
 # Plot results as volcano plot
 vol_plot_hnly <- res_hnly %>%
   mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
@@ -115,7 +115,7 @@ ggsave(filename="DESeq_HN_vs_LN.png",hnln)
 
 #### high/yes vs low/no
 res_hyln <- results(DESeq_output, tidy=TRUE,
-                    contrast = c("BDI_category_antidepressant_use","low+no", "high+yes"))
+                    contrast = c("BDI_category_antidepressant_use","high+yes", "low+no"))
 # Plot results as volcano plot
 vol_plot_hyln <- res_hyln %>%
   mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
@@ -151,7 +151,7 @@ ggsave(filename="DESeq_HY_vs_LN.png",hyln)
 
 #### high/yes vs low/yes
 res_hyly <- results(DESeq_output, tidy=TRUE,
-                    contrast = c("BDI_category_antidepressant_use","low+yes", "high+yes"))
+                    contrast = c("BDI_category_antidepressant_use","high+yes", "low+yes"))
 # Plot results as volcano plot
 vol_plot_hyly <- res_hyly %>%
   mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
@@ -186,7 +186,7 @@ ggsave(filename="DESeq_HY_vs_LY.png",hyly)
 
 #### low/yes vs low/no
 res_lyln <- results(DESeq_output, tidy=TRUE,
-                    contrast = c("BDI_category_antidepressant_use","low+no", "low+yes"))
+                    contrast = c("BDI_category_antidepressant_use","low+yes", "low+no"))
 # Plot results as volcano plot
 vol_plot_lyln <- res_lyln %>%
   mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
