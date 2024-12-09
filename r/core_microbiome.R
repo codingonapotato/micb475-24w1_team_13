@@ -97,7 +97,7 @@ unique_ASVs <- setdiff(unpacked_bdi_anti_high_no_ASVs, unpacked_bdi_anti_high_ye
 df_unique_ASVs <- as.data.frame(unique_ASVs)
 
 # Write dataframe to file
-write.csv(df_unique_ASVs, "bdi_anti_high_no_unique_members.csv")
+write.csv(df_unique_ASVs, "data/bdi_anti_high_no_unique_members.csv")
 
 #### Save plots to file ####
 # Constant for dimensions
