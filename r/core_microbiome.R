@@ -53,7 +53,13 @@ bdi_anti_low_yes_ASVs <- core_members(depression_bdi_anti_low_yes, detection=DET
 bdi_anti_list_full <- list(HN = bdi_anti_high_no_ASVs,
                            HY = bdi_anti_high_yes_ASVs,
                            LN = bdi_anti_low_no_ASVs,
-                           LY = bdi_anti_low_yes_ASVs) 
+                           LY = bdi_anti_low_yes_ASVs)
+
+# Unpack the ASVs into separate elements for downstream analysis
+unpacked_bdi_anti_high_no_ASVs <- lapply(bdi_anti_high_no_ASVs, function(x) strsplit(x, "\t")[[1]])
+unpacked_bdi_anti_high_yes_ASVs <- lapply(bdi_anti_high_yes_ASVs, function(x) strsplit(x, "\t")[[1]])
+unpacked_bdi_anti_low_no_ASVs <- lapply(bdi_anti_low_no_ASVs, function(x) strsplit(x, "\t")[[1]])
+unpacked_bdi_anti_low_yes_ASVs <- lapply(bdi_anti_low_yes_ASVs, function(x) strsplit(x, "\t")[[1]])
 
 #### Generate Venn Diagrams by metadata group ####
 # Antidepressant_use
@@ -80,6 +86,18 @@ bdi_anti_venn <- ggVennDiagram(x = bdi_anti_list_full) +
         panel.background = element_rect(fill = "white", color = NA),
         plot.title = element_text(hjust = 0.5, margin=margin(10,0,30,0))) +
   ggtitle("BDI Category & Antidepressant Use")
+
+#### Extract the unique members from the BDI_category = High and Antidepressant_use = No group
+# Calculate set difference
+unique_ASVs <- setdiff(unpacked_bdi_anti_high_no_ASVs, unpacked_bdi_anti_high_yes_ASVs) %>%
+    setdiff(unpacked_bdi_anti_low_yes_ASVs) %>%
+    setdiff(unpacked_bdi_anti_low_no_ASVs)
+
+# Coerce into dataframe
+df_unique_ASVs <- as.data.frame(unique_ASVs)
+
+# Write dataframe to file
+write.csv(df_unique_ASVs, "bdi_anti_high_no_unique_members.csv")
 
 #### Save plots to file ####
 # Constant for dimensions
