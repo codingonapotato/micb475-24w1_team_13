@@ -4,7 +4,7 @@
 
 ### Upcoming
 
-- [November 28](./meeting_minutes/2024_11_28.md)
+- [December 2](./meeting_minutes/2024_12_02.md)
 
 ### September
 
@@ -22,3 +22,4 @@
 - [November 4](./meeting_minutes/2024_11_04.md)
 - [November 18](./meeting_minutes/2024_11_18.md)
 - [November 25](./meeting_minutes/2024_11_25.md)
+- [November 28](./meeting_minutes/2024_11_28.md)

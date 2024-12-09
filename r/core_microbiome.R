@@ -38,42 +38,48 @@ DETECTION <- 0
 # Antidepressant_use ASV's
 anti_yes_ASVs <- core_members(depression_anti_yes, detection=DETECTION, prevalence = PREVALENCE) 
 anti_no_ASVs <- core_members(depression_anti_no, detection=DETECTION, prevalence = PREVALENCE)
-anti_list_full <- list(antidepressant_yes = anti_yes_ASVs, antidepressant_no = anti_no_ASVs)
+anti_list_full <- list(yes = anti_yes_ASVs, no = anti_no_ASVs)
 
 # BDI_category ASV's
 bdi_high_ASVs <- core_members(depression_bdi_high, detection=DETECTION, prevalence = PREVALENCE)
 bdi_low_ASVs <- core_members(depression_bdi_low, detection=DETECTION, prevalence = PREVALENCE)
-bdi_list_full <- list(bdi_high = bdi_high_ASVs, bdi_low = bdi_low_ASVs)
+bdi_list_full <- list(high = bdi_high_ASVs, low = bdi_low_ASVs)
 
 # BDI_category_antidepressant_use ASV's
 bdi_anti_high_no_ASVs <- core_members(depression_bdi_anti_high_no, detection=DETECTION, prevalence = PREVALENCE)
 bdi_anti_high_yes_ASVs <- core_members(depression_bdi_anti_high_yes, detection=DETECTION, prevalence = PREVALENCE)
 bdi_anti_low_no_ASVs <- core_members(depression_bdi_anti_low_no, detection=DETECTION, prevalence = PREVALENCE)
 bdi_anti_low_yes_ASVs <- core_members(depression_bdi_anti_low_yes, detection=DETECTION, prevalence = PREVALENCE)
-bdi_anti_list_full <- list(bdi_anti_high_no = bdi_anti_high_no_ASVs,
-                           bdi_anti_high_yes = bdi_anti_high_yes_ASVs,
-                           bdi_anti_low_no = bdi_anti_low_no_ASVs,
-                           bdi_anti_low_yes = bdi_anti_low_yes_ASVs)
+bdi_anti_list_full <- list(HN = bdi_anti_high_no_ASVs,
+                           HY = bdi_anti_high_yes_ASVs,
+                           LN = bdi_anti_low_no_ASVs,
+                           LY = bdi_anti_low_yes_ASVs) 
 
 #### Generate Venn Diagrams by metadata group ####
 # Antidepressant_use
 anti_venn <- ggVennDiagram(x = anti_list_full) +
   scale_x_continuous(expand = expansion(mult = .5)) +
   theme(plot.background = element_rect(fill = "white", color = NA),
-        panel.background = element_rect(fill = "white", color = NA))
+        panel.background = element_rect(fill = "white", color = NA),
+        plot.title = element_text(hjust = 0.5, margin=margin(10,0,30,0))) +
+  ggtitle("Antidepressant Use")
 anti_venn
 
 # BDI_category
 bdi_venn <- ggVennDiagram(x = bdi_list_full) +
   scale_x_continuous(expand = expansion(mult = .3)) +
   theme(plot.background = element_rect(fill = "white", color = NA),
-        panel.background = element_rect(fill = "white", color = NA))
+        panel.background = element_rect(fill = "white", color = NA),
+        plot.title = element_text(hjust = 0.5, margin=margin(10,0,30,0))) +
+  ggtitle("BDI Category")
 
 # BDI_category_antidepressant_use
 bdi_anti_venn <- ggVennDiagram(x = bdi_anti_list_full) +
   scale_x_continuous(expand = expansion(mult = .2)) +
   theme(plot.background = element_rect(fill = "white", color = NA),
-        panel.background = element_rect(fill = "white", color = NA))
+        panel.background = element_rect(fill = "white", color = NA),
+        plot.title = element_text(hjust = 0.5, margin=margin(10,0,30,0))) +
+  ggtitle("BDI Category & Antidepressant Use")
 
 #### Save plots to file ####
 # Constant for dimensions

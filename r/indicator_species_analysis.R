@@ -49,8 +49,3 @@ isa_final_mixed <- isa_mixed$sign %>%
 save(isa_final_bdi_category, file = "data/isa_final_bdi_category.RData")
 save(isa_final_antidepressant, file = "data/isa_final_antidepressant.RData")
 save(isa_final_mixed, file = "data/isa_final_mixed.RData")
-
-#### Load data ####
-load("data/isa_final_bdi_category.RData")
-load("data/isa_final_antidepressant.RData")
-load("data/isa_final_mixed.RData")
