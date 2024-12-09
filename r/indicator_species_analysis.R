@@ -4,6 +4,7 @@ library(indicspecies)
 
 #### Load Data ####
 load("data/depression_phyloseq.RData")
+bdi_anti_high_no_unique_ASVs <- as.vector(read.csv("data/bdi_anti_high_no_unique_members.csv"))
 
 #### Indicator Species/Taxa Analysis ####
 # Glom to Species
@@ -44,6 +45,15 @@ isa_final_mixed <- isa_mixed$sign %>%
   rownames_to_column(var = "ASV") %>%
   left_join(taxtable) %>%
   filter(p.value < 0.05)
+
+# Filter and extract ASVs from isa_final_mixed with at least 0.5
+isa_final_mixed_filtered <- filter(isa_final_mixed, isa_final_mixed$stat >= 0.5)
+isa_final_mixed_ASVs_list <- as.list(isa_final_mixed_filtered$ASV)
+
+# Find list of common ASVs shared between core microbiome group + ISA groups
+common_ASVs <- intersect(isa_final_mixed_ASVs_list, bdi_anti_high_no_unique_ASVs)
+
+# Filter table with this intersection group
 
 #### Save data ####
 save(isa_final_bdi_category, file = "data/isa_final_bdi_category.RData")
