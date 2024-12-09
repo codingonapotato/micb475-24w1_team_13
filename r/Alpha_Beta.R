@@ -4,14 +4,13 @@ library(tidyverse)
 library(picante)
 library(ggsignif)
 library(vegan)
-install.packages("ggforce")
 library(ggforce)
 
 
 load("data/depression_phyloseq.Rdata")
 load("data/depression_phyloseq_rare.Rdata")
 
-samp_dat_wdiv$BDI_category_antidepressant_use <- factor(samp_dat_wdiv$BDI_category_antidepressant_use, levels = c("low+no","low+yes","high+no","high+yes"))
+#samp_dat_wdiv$BDI_category_antidepressant_use <- factor(samp_dat_wdiv$BDI_category_antidepressant_use, levels = c("low+no","low+yes","high+no","high+yes"))
 
 
 #### alpha diversity ####
@@ -24,21 +23,15 @@ gg_richnessB <- plot_richness(depression_rare, x = "BDI_category", measure = c("
   xlab("BDI Category")+
   geom_boxplot()
 
-gg_richnessC <- plot_richness(depression_rare, x = "BDI_category_antidepressant_use", measure = c("shannon","Observed"))+
+gg_richnessC <- plot_richness(depression_rare, x = "BDI_category_antidepressant_use", measure = "Observed") +
   xlab("BDI Category and Antidepressant Use")+
-  geom_boxplot()
-
-gg_richnessA
-gg_richnessB
-gg_richnessC
-
-ggsave(filename = "figures/richness_plot_A.png", 
-       gg_richnessA,
-       height = 4, width = 6)
-
-ggsave(filename = "figures/richness_plot_B.png", 
-       gg_richnessB,
-       height = 4, width = 6)
+  geom_boxplot()+
+  theme_bw()+
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),   
+    plot.title = element_blank()  
+    )
 
 ggsave(filename = "figures/richness_plot_C.png", 
        gg_richnessC,
@@ -66,13 +59,6 @@ plot.pdC <- ggplot(sample_data(depression_rare), aes(BDI_category_antidepressant
   xlab("BDI Category and Antidepressant Use")+
   ylab("Phylogenetic Diversity")
 
-ggsave(filename = "figures/PD_plot_A.png", 
-       plot.pdA,
-       height = 4, width = 6)
-
-ggsave(filename = "figures/PD_plot_B.png", 
-       plot.pdB,
-       height = 4, width = 6)
 
 ggsave(filename = "figures/PD_plot_C.png", 
        plot.pdC,
@@ -93,49 +79,22 @@ wilcox.test(Shannon ~ BDI_category, data=samp_dat_wdiv, exact = FALSE)
 kruskal.test(Observed ~ BDI_category_antidepressant_use, data=samp_dat_wdiv)
 kruskal.test(Shannon ~ BDI_category_antidepressant_use, data=samp_dat_wdiv)
 
-### stats and graph of observed combined ###
+### Full stats list of observed, shannon, FPD using anova ###
 
 lm_ob_vs_site_log <- lm(log(Observed) ~ `BDI_category_antidepressant_use`, data=samp_dat_wdiv)
 anova_ob_vs_site_log <- aov(lm_ob_vs_site_log)
 summary(anova_ob_vs_site_log)
 TukeyHSD(anova_ob_vs_site_log)
 
-samp_dat_wdiv$BDI_category_antidepressant_use <- factor(samp_dat_wdiv$BDI_category_antidepressant_use, levels = c("low+no","low+yes","high+no","high+yes"))
-
-final_obs <- ggplot(samp_dat_wdiv, aes(x=`BDI_category_antidepressant_use`, y=Observed)) +
-  geom_boxplot() +
-  geom_signif(comparisons = list(c("low+no","low+yes"), c("low+no", "high+no"), c("low+no","high+yes")),
-              y_position = c(178, 193, 204),
-              annotations = c("0.80","0.81","0.26"))
-final_obs
-
-### stats and graph of shannon combined ###
-
 lm_sh_vs_site_log <- lm(log(Shannon) ~ `BDI_category_antidepressant_use`, data=samp_dat_wdiv)
 anova_sh_vs_site_log <- aov(lm_sh_vs_site_log)
 summary(anova_sh_vs_site_log)
 TukeyHSD(anova_sh_vs_site_log)
 
-final_sh <- ggplot(samp_dat_wdiv, aes(x=`BDI_category_antidepressant_use`, y=Shannon)) +
-  geom_boxplot() +
-  geom_signif(comparisons = list(c("low+no","low+yes"), c("low+no", "high+no"), c("low+no","high+yes")),
-              y_position = c(4.5, 4.9, 5.3),
-              annotations = c("0.65","0.96","0.95"))
-final_sh
-
-### stats and graph of PD combined ###
-
 lm_pd_vs_site_log <- lm(log(PD) ~ `BDI_category_antidepressant_use`, data=samp_dat_wdiv)
 anova_pd_vs_site_log <- aov(lm_pd_vs_site_log)
 summary(anova_pd_vs_site_log)
 TukeyHSD(anova_pd_vs_site_log)
-
-final_pd <- ggplot(samp_dat_wdiv, aes(x=`BDI_category_antidepressant_use`, y=PD)) +
-  geom_boxplot() +
-  geom_signif(comparisons = list(c("low+no","low+yes"), c("low+no", "high+no"), c("low+no","high+yes"), c("low+yes", "high+yes")),
-              y_position = c(16, 17, 18,19),
-              annotations = c("0.78","0.99","0.25", "0.17"))
-final_pd
 
 #### Beta Diversity ####
 #### stats ####
