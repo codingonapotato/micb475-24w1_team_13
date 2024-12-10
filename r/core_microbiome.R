@@ -50,10 +50,10 @@ bdi_anti_high_no_ASVs <- core_members(depression_bdi_anti_high_no, detection=DET
 bdi_anti_high_yes_ASVs <- core_members(depression_bdi_anti_high_yes, detection=DETECTION, prevalence = PREVALENCE)
 bdi_anti_low_no_ASVs <- core_members(depression_bdi_anti_low_no, detection=DETECTION, prevalence = PREVALENCE)
 bdi_anti_low_yes_ASVs <- core_members(depression_bdi_anti_low_yes, detection=DETECTION, prevalence = PREVALENCE)
-bdi_anti_list_full <- list(HN = bdi_anti_high_no_ASVs,
-                           HY = bdi_anti_high_yes_ASVs,
-                           LN = bdi_anti_low_no_ASVs,
-                           LY = bdi_anti_low_yes_ASVs)
+bdi_anti_list_full <- list(LN = bdi_anti_low_no_ASVs, 
+                           LY = bdi_anti_low_yes_ASVs,
+                           HN = bdi_anti_high_no_ASVs,
+                           HY = bdi_anti_high_yes_ASVs)
 
 # Unpack the ASVs into separate elements for downstream analysis
 unpacked_bdi_anti_high_no_ASVs <- lapply(bdi_anti_high_no_ASVs, function(x) strsplit(x, "\t")[[1]])
