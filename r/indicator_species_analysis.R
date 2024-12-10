@@ -46,16 +46,21 @@ isa_final_mixed <- isa_mixed$sign %>%
   left_join(taxtable) %>%
   filter(p.value < 0.05)
 
-# Filter and extract ASVs from isa_final_mixed with at least 0.5
-isa_final_mixed_filtered <- filter(isa_final_mixed, isa_final_mixed$stat >= 0.5)
+# Filter and extract ASVs from isa_final_mixed with at least indicator species value of 0.5 and
+# only the ASVs that are unique to the high BDI, no antidepressant use condition
+isa_final_mixed_filtered <- filter(isa_final_mixed, stat >= 0.5 & 
+                                          `s.high+no` == 1 &
+                                          `s.high+yes` + `s.low+yes` + `s.low+no` == 0)
 isa_final_mixed_ASVs_list <- as.list(isa_final_mixed_filtered$ASV)
 
 # Find list of common ASVs shared between core microbiome group + ISA groups
 common_ASVs <- intersect(isa_final_mixed_ASVs_list, bdi_anti_high_no_unique_ASVs)
-
 # Filter table with this intersection group
+common_isa <- filter(isa_final_mixed, isa_final_mixed$ASV %in% common_ASVs)
 
 #### Save data ####
 save(isa_final_bdi_category, file = "data/isa_final_bdi_category.RData")
 save(isa_final_antidepressant, file = "data/isa_final_antidepressant.RData")
 save(isa_final_mixed, file = "data/isa_final_mixed.RData")
+save(isa_final_mixed_filtered, file = "data/isa_bdi_anti_high_no.RData")
+save(common_isa, file = "data/common_isa.RData")
