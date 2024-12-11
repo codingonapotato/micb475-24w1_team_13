@@ -107,6 +107,7 @@ dm_unifrac <- UniFrac(depression_rare, weighted=FALSE) # unweighted UniFrac
 dm_bray <- vegdist(t(otu_table(depression_rare)), method="bray") # Bray-curtis
 dm_jaccard <- vegdist(t(otu_table(depression_rare)), method="jaccard") # Jaccard
 
+#stats
 adonis2(dm_wunifrac ~ BDI_category*Antidepressant_use, data=samp_dat_wdiv)
 adonis2(dm_wunifrac ~ Antidepressant_use, data=samp_dat_wdiv)
 adonis2(dm_wunifrac ~ BDI_category, data=samp_dat_wdiv)
@@ -114,6 +115,7 @@ adonis2(dm_unifrac ~ BDI_category*Antidepressant_use, data=samp_dat_wdiv)
 adonis2(dm_bray ~ BDI_category*Antidepressant_use, data=samp_dat_wdiv)
 adonis2(dm_jaccard ~ BDI_category*Antidepressant_use, data=samp_dat_wdiv)
 
+#plotting PCoA
 bray <- distance(depression_rare, method = "bray")
 jaccard <- distance(depression_rare, method = "jaccard")
 unifrac <- distance(depression_rare, method = "unifrac")
@@ -124,6 +126,7 @@ pcoa_j <- ordinate(depression_rare, method = "PCoA", distance = jaccard)
 pcoa_u <- ordinate(depression_rare, method = "PCoA", distance = unifrac)
 pcoa_w <- ordinate(depression_rare, method = "PCoA", distance = wunifrac)
 
+#plotting code
 gg_pcoab <- plot_ordination(depression_rare, pcoa_b, color = "BDI_category_antidepressant_use")+
   labs(col = "BDI Category and \nAntidepressant Use")+
   theme(legend.title = element_text(size = 8))+
@@ -147,6 +150,7 @@ gg_pcoaw <- plot_ordination(depression_rare, pcoa_w, color = "BDI_category_antid
   theme(legend.title = element_text(size = 8))+
   stat_ellipse(type = "norm", level = 0.8)
 
+#saving files
 ggsave(filename = "figures/gg_pcoab.png", 
        gg_pcoab,
        height = 4, width = 6)
@@ -180,6 +184,7 @@ gg_taxaB <- plot_bar(mpt_phylum, fill="Phylum") +
 gg_taxaC <- plot_bar(mpt_phylum, fill="Phylum") + 
   facet_wrap(.~BDI_category_antidepressant_use, scales = "free_x")
 
+#saving figures                                         
 ggsave("figures/plot_taxonomyA.png"
        , gg_taxaA
        , height=8, width =12)
