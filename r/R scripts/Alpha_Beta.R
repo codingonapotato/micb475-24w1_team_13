@@ -3,7 +3,6 @@ library(phyloseq)
 library(ape)
 library(tidyverse)
 library(picante)
-library(ggsignif)
 library(vegan)
 library(ggforce)
 
